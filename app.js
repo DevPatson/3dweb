@@ -1,61 +1,42 @@
-function loadSVG () {
-    fetch("city.svg")
-    .then((response) => { return response.text();})
-    .then((svg) => {
-        document.getElementById('bg_city').innerHTML = svg;
-        document.querySelector('#bg_city svg').setAttribute("preserveAspectRatio", "xMidYMid slice");
-        setAnimationScroll();
-    })
-}
-loadSVG();
-function setAnimationScroll () {
-    gsap.registerPlugin(ScrollTrigger);
-    let runAnimation = gsap.timeline({
-        scrollTrigger: {
-            trigger: "#bg_city",
-            start: "top top",
-            end: "+=1000",
-            scrub: true,
-            pin: true
-        }
-    });
+let nextButton = document.getElementById('next');
+let prevButton = document.getElementById('prev');
+let carousel = document.querySelector('.carousel');
+let listHTML = document.querySelector('.carousel .list');
+let seeMoreButtons = document.querySelectorAll('.seeMore');
+let backButton = document.getElementById('back');
 
-    runAnimation.add([
-        gsap.to("#bg_city svg", 2, {
-            scale: 1.5
-        }),
-        gsap.to("#full_city", 2, {
-            opacity: 0
-        })
-    ])
-    .add([
-        gsap.to("#building_top", 2, {
-            y: -200,
-            opacity: 0
-        }),
-        gsap.to("#wall_side", 2, {
-            x: -200,
-            opacity: 0
-        }),
-        gsap.to("#wall_front", 2, {
-            x: 200, y: 200,
-            opacity: 0
-        })
-    ])
-    .add([
-        gsap.to("#interior_wall_side", 2, {
-            x: -200,
-            opacity: 0
-        }),
-        gsap.to("#interior_wall_top", 2, {
-            y: -200,
-            opacity: 0
-        }),
-        gsap.to("#interior_wall_side_2", 2, {
-            opacity: 0
-        }),
-        gsap.to("#interior_wall_front", 2, {
-            opacity: 0
-        })
-    ]);
+nextButton.onclick = function(){
+    showSlider('next');
+}
+prevButton.onclick = function(){
+    showSlider('prev');
+}
+let unAcceppClick;
+const showSlider = (type) => {
+    nextButton.style.pointerEvents = 'none';
+    prevButton.style.pointerEvents = 'none';
+
+    carousel.classList.remove('next', 'prev');
+    let items = document.querySelectorAll('.carousel .list .item');
+    if(type === 'next'){
+        listHTML.appendChild(items[0]);
+        carousel.classList.add('next');
+    }else{
+        listHTML.prepend(items[items.length - 1]);
+        carousel.classList.add('prev');
+    }
+    clearTimeout(unAcceppClick);
+    unAcceppClick = setTimeout(()=>{
+        nextButton.style.pointerEvents = 'auto';
+        prevButton.style.pointerEvents = 'auto';
+    }, 2000)
+}
+seeMoreButtons.forEach((button) => {
+    button.onclick = function(){
+        carousel.classList.remove('next', 'prev');
+        carousel.classList.add('showDetail');
+    }
+});
+backButton.onclick = function(){
+    carousel.classList.remove('showDetail');
 }
